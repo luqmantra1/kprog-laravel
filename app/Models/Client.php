@@ -20,8 +20,8 @@ class Client extends Model
     ];
 
     // Relationship: One Client has many Proposals
-    // public function proposals()
-    // {
-    //     return $this->hasMany(Proposal::class, 'client_id');
-    // }
+    public function proposals()
+    {
+        return $this->hasMany(Proposal::class, 'client_id');
+    }
 }

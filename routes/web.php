@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\QuotationController;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -53,6 +55,32 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('delete/{id}', [ClientController::class, 'delete']);
 });
 
+Route::prefix('panel/proposal')->group(function () {
+    Route::get('/', [ProposalController::class, 'list']);
+    Route::get('add', [ProposalController::class, 'add']);
+    Route::post('insert', [ProposalController::class, 'insert']);
+    Route::get('edit/{id}', [ProposalController::class, 'edit']);
+    Route::post('update/{id}', [ProposalController::class, 'update']);
+    Route::get('delete/{id}', [ProposalController::class, 'delete']);
+});
+
+// Quotation Routes
+Route::prefix('panel/quotation')->group(function() {
+    // List all quotations
+    Route::get('/', [QuotationController::class, 'list'])->name('quotation.list');
+    
+    // Add a new quotation
+    Route::get('add', [QuotationController::class, 'add'])->name('quotation.add');
+    Route::post('add', [QuotationController::class, 'insert'])->name('quotation.insert');
+
+    // Edit a quotation
+    Route::get('edit/{id}', [QuotationController::class, 'edit'])->name('quotation.edit');
+    Route::post('edit/{id}', [QuotationController::class, 'update'])->name('quotation.update');
+    
+    // Delete a quotation
+    Route::get('delete/{id}', [QuotationController::class, 'delete'])->name('quotation.delete');
+});
+
     //Policies
     // Route::get('panel/policy', [PolicyController::class, 'list']);
     // Route::get('panel/policy/add', [PolicyController::class, 'add']);
@@ -60,22 +88,10 @@ Route::group(['middleware' => 'useradmin'], function () {
     // Route::get('panel/policy/edit/{id}', [PolicyController::class, 'edit']);
     // Route::post('panel/policy/edit/{id}', [PolicyController::class, 'update']);
     // Route::get('panel/policy/delete/{id}', [PolicyController::class, 'delete']);
+    
 
-    //Proposal
-    // Route::get('panel/proposal', [ProposalController::class, 'list']);
-    // Route::get('panel/proposal/add', [ProposalController::class, 'add']);
-    // Route::post('panel/proposal/add', [ProposalController::class, 'insert']);
-    // Route::get('panel/proposal/edit/{id}', [ProposalController::class, 'edit']);
-    // Route::post('panel/proposal/edit/{id}', [ProposalController::class, 'update']);
-    // Route::get('panel/proposal/delete/{id}', [ProposalController::class, 'delete']);
+    
 
-    //Quotation
-    // Route::get('panel/quotation', [QuotationController::class, 'list']);
-    // Route::get('panel/quotation/add', [QuotationController::class, 'add']);
-    // Route::post('panel/quotation/add', [QuotationController::class, 'insert']);
-    // Route::get('panel/quotation/edit/{id}', [QuotationController::class, 'edit']);
-    // Route::post('panel/quotation/edit/{id}', [QuotationController::class, 'update']);
-    // Route::get('panel/quotation/delete/{id}', [QuotationController::class, 'delete']);
 
     //Documents
 //     Route::get('panel/document', [DocumentController::class, 'list']);
