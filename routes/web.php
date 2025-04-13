@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\QuotationController;
+use App\Http\Controllers\PolicyController;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -82,12 +83,14 @@ Route::prefix('panel/quotation')->group(function() {
 });
 
     //Policies
-    // Route::get('panel/policy', [PolicyController::class, 'list']);
-    // Route::get('panel/policy/add', [PolicyController::class, 'add']);
-    // Route::post('panel/policy/add', [PolicyController::class, 'insert']);
-    // Route::get('panel/policy/edit/{id}', [PolicyController::class, 'edit']);
-    // Route::post('panel/policy/edit/{id}', [PolicyController::class, 'update']);
-    // Route::get('panel/policy/delete/{id}', [PolicyController::class, 'delete']);
+    Route::get('panel/policy', [PolicyController::class, 'list'])->name('policy.list');
+    Route::get('panel/policy/add', [PolicyController::class, 'add'])->name('policy.add');
+    Route::post('panel/policy/add', [PolicyController::class, 'insert'])->name('policy.insert');
+    Route::get('panel/policy/edit/{id}', [PolicyController::class, 'edit'])->name('policy.edit');
+    Route::post('panel/policy/edit/{id}', [PolicyController::class, 'update'])->name('policy.update');
+    Route::get('panel/policy/delete/{id}', [PolicyController::class, 'delete'])->name('policy.delete');
+    
+
     
 
     
