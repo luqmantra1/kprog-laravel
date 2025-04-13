@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClientController;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -42,13 +43,15 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('panel/user/delete/{id}', [UserController::class, 'delete']);
 
 });
-    //CLient
-    // Route::get('panel/client', [ClientController::class, 'list']);
-    // Route::get('panel/client/add', [ClientController::class, 'add']);
-    // Route::post('panel/client/add', [ClientController::class, 'insert']);
-    // Route::get('panel/client/edit/{id}', [ClientController::class, 'edit']);
-    // Route::post('panel/client/edit/{id}', [ClientController::class, 'update']);
-    // Route::get('panel/client/delete/{id}', [ClientController::class, 'delete']);
+    // CLIENT ROUTES
+    Route::prefix('panel/client')->group(function () {
+    Route::get('/', [ClientController::class, 'index']);
+    Route::get('add', [ClientController::class, 'add']);
+    Route::post('add', [ClientController::class, 'insert']);
+    Route::get('edit/{id}', [ClientController::class, 'edit']);
+    Route::post('edit/{id}', [ClientController::class, 'update']);
+    Route::get('delete/{id}', [ClientController::class, 'delete']);
+});
 
     //Policies
     // Route::get('panel/policy', [PolicyController::class, 'list']);
