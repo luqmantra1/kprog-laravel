@@ -11,7 +11,7 @@
       </li>
 
       <!-- Notification Bell -->
-      <li class="nav-item dropdown ms-3 position-relative">
+      <!-- <li class="nav-item dropdown ms-3 position-relative">
         <a class="nav-link" href="#" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <div class="position-relative">
             <iconify-icon icon="solar:bell-linear" class="fs-5 text-dark"></iconify-icon>
@@ -25,7 +25,7 @@
           <li><a class="dropdown-item" href="#">New submission received</a></li>
           <li><a class="dropdown-item" href="#">Task approved</a></li>
         </ul>
-      </li>
+      </li> -->
     </ul>
 
     <!-- Right Side (Profile) -->
@@ -39,8 +39,8 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up shadow-sm" aria-labelledby="profileDropdown">
             <li class="dropdown-header fw-semibold text-dark px-3">Welcome, {{ Auth::user()->name ?? 'User' }}</li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
+            <!-- <li><hr class="dropdown-divider"></li> -->
+            <!-- <li>
               <a class="dropdown-item d-flex align-items-center gap-2" href="#">
                 <i class="ti ti-user fs-5 text-muted"></i> My Profile
               </a>
@@ -54,8 +54,8 @@
               <a class="dropdown-item d-flex align-items-center gap-2" href="#">
                 <i class="ti ti-list-check fs-5 text-muted"></i> My Tasks
               </a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
+            </li> -->
+            <!-- <li><hr class="dropdown-divider"></li> -->
             <li>
               <a class="dropdown-item text-danger d-flex align-items-center gap-2" href="{{ url('logout') }}">
                 <i class="ti ti-logout fs-5"></i> Logout
