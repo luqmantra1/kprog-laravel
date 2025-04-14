@@ -9,9 +9,12 @@
       @include('_message')
 
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>Client List</h3>
-        <a href="{{ url('panel/client/add') }}" class="btn btn-primary">Add Client</a>
-      </div>
+  <h3>Client List</h3>
+  @if(!empty($PermissionAdd))
+    <a href="{{ url('panel/client/add') }}" class="btn btn-primary">Add Client</a>
+  @endif
+</div>
+
 
       <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle">
@@ -36,9 +39,15 @@
               <td>{{ $value->phone }}</td>
               <td>{{ \Carbon\Carbon::parse($value->created_at)->format('d M Y') }}</td>
               <td class="text-center">
+              @if(!empty($PermissionEdit))
                 <a href="{{ url('panel/client/edit/'.$value->id) }}" class="btn btn-sm btn-warning">Edit</a>
+              @endif
+
+              @if(!empty($PermissionDelete))
                 <a href="{{ url('panel/client/delete/'.$value->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this client?')">Delete</a>
-              </td>
+              @endif
+            </td>
+
             </tr>
             @empty
             <tr>

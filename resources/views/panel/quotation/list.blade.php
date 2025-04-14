@@ -35,7 +35,7 @@
             <tr>
               <td>{{ $quotation->id }}</td>
               <td>{{ $quotation->proposal->client->company_name ?? 'N/A' }}</td>
-              <td>{{ $quotation->proposal->proposal_title }}</td>
+              <td>{{ $quotation->proposal->proposal_title ?? 'No Proposal Title' }}</td>
               <td>{{ $quotation->insurance_company }}</td>
               <td>{{ $quotation->quotation_number }}</td>
               <td>RM {{ number_format($quotation->amount, 2) }}</td>
@@ -44,9 +44,10 @@
               <td>
                 @php
                   $statusBadge = match($quotation->status) {
-                    'pending' => 'secondary',
+                    'draft' => 'secondary',
+                    'sent' => 'info',
+                    'under_review' => 'warning',
                     'approved' => 'success',
-                    'rejected' => 'danger',
                     default => 'dark'
                   };
                 @endphp
@@ -59,7 +60,7 @@
                   $acceptanceBadge = match($quotation->acceptance_status) {
                     'accepted' => 'success',
                     'declined' => 'danger',
-                    'waiting' => 'warning',
+                    'awaiting' => 'warning',
                     default => 'secondary'
                   };
                 @endphp

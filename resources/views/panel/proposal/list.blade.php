@@ -9,21 +9,29 @@
       @include('_message')
 
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>Proposal List</h3>
+        <h3 class="mb-0">Proposal List</h3>
+
+        <!-- Show Add Proposal button only if the user has permission -->
+        @if(!empty($PermissionAdd))
         <a href="{{ url('panel/proposal/add') }}" class="btn btn-primary">Add Proposal</a>
+        @endif
       </div>
 
       <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle">
           <thead class="table-dark">
             <tr>
-              <th>#</th>
-              <th>Client</th>
-              <th>Title</th>
-              <th>Submission Date</th>
-              <th>Status</th>
-              <th>Created At</th>
-              <th class="text-center">Actions</th>
+              <th scope="col">#</th>
+              <th scope="col">Client</th>
+              <th scope="col">Title</th>
+              <th scope="col">Submission Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">Created At</th>
+
+              <!-- Show Action column only if the user has permission for Edit or Delete -->
+              @if(!empty($PermissionEdit) || !empty($PermissionDelete))
+              <th scope="col" class="text-center">Actions</th>
+              @endif
             </tr>
           </thead>
           <tbody>
@@ -45,10 +53,18 @@
                 <span class="badge bg-{{ $badgeClass }}">{{ ucfirst($value->status) }}</span>
               </td>
               <td>{{ \Carbon\Carbon::parse($value->created_at)->format('d M Y') }}</td>
+
+              <!-- Show action buttons based on permissions -->
+              @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <td class="text-center">
+                @if(!empty($PermissionEdit))
                 <a href="{{ url('panel/proposal/edit/'.$value->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                @endif
+                @if(!empty($PermissionDelete))
                 <a href="{{ url('panel/proposal/delete/'.$value->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this proposal?')">Delete</a>
+                @endif
               </td>
+              @endif
             </tr>
             @empty
             <tr>

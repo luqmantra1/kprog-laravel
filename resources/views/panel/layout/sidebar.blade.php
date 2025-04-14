@@ -24,26 +24,31 @@
               $PermissionDocument = App\Models\PermissionRoleModel::getPermission('Document', Auth::user()->role_id);
               $PermissionSetting = App\Models\PermissionRoleModel::getPermission('Setting', Auth::user()->role_id);
             @endphp
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Home</span>
+            <li class="nav-small-cap mt-4 mb-2 text-uppercase text-muted px-3 text-sm fw-semibold tracking-wider">
+              <div class="d-flex align-items-center gap-2">
+                <iconify-icon icon="mdi:home-outline" class="fs-5 text-secondary"></iconify-icon>
+                <span>Home</span>
+              </div>
             </li>
+
             <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'dashboard') collapsed @endif"  href="{{ url('panel/dashboard') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:atom-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:view-dashboard-outline"></iconify-icon>
                     <span class="hide-menu">Dashboard</span>
                 </a>
                 </li>
             @if(!empty($PermissionClient))
-                <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Internal</span>
+            <li class="nav-small-cap mt-4 mb-2 text-uppercase text-muted px-3 text-sm fw-semibold tracking-wider">
+              <div class="d-flex align-items-center gap-2">
+                <iconify-icon icon="mdi:domain" class="fs-5 text-secondary"></iconify-icon>
+                <span>Internal</span>
+              </div>
             </li>
             @endif
             @if(!empty($PermissionClient))
             <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'client') collapsed @endif"  href="{{ url('panel/client') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:account-multiple-outline"></iconify-icon>
                     <span class="hide-menu">Client</span>
                 </a>
                 </li>
@@ -51,7 +56,7 @@
                 @if(!empty($PermissionPolicy))
                 <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'policy') collapsed @endif"  href="{{ url('panel/policy') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:file-document-multiple-outline"></iconify-icon>
                     <span class="hide-menu">Policies</span>
                 </a>
                 </li>
@@ -59,7 +64,7 @@
             @if(!empty($PermissionProposal))
                 <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'proposal') collapsed @endif"  href="{{ url('panel/proposal') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:lightbulb-outline"></iconify-icon>
                     <span class="hide-menu">Proposal</span>
                 </a>
                 </li>
@@ -67,7 +72,7 @@
             @if(!empty($PermissionQuotation))
                 <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'quotation') collapsed @endif"  href="{{ url('panel/quotation') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:comment-quote-outline"></iconify-icon>
                     <span class="hide-menu">Quotation</span>
                 </a>
                 </li>
@@ -75,21 +80,23 @@
             @if(!empty($PermissionDocument))
                 <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'document') collapsed @endif"  href="{{ url('panel/document') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:file-document-outline"></iconify-icon>
                     <span class="hide-menu">Documents</span>
                 </a>
                 </li>
                 @endif
             @if(!empty($PermissionUser))
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear"  class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">System</span>
+            <li class="nav-small-cap mt-4 mb-2 text-uppercase text-muted px-3 text-sm fw-semibold tracking-wider">
+              <div class="d-flex align-items-center gap-2">
+                <iconify-icon icon="mdi:cog-outline" class="fs-5 text-secondary"></iconify-icon>
+                <span>System</span>
+              </div>
             </li>
             @endif
             @if(!empty($PermissionUser))
             <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'user') collapsed @endif"  href="{{ url('panel/user') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:account-outline"></iconify-icon>
                     <span class="hide-menu">User</span>
                 </a>
                 </li>
@@ -97,7 +104,7 @@
             @if(!empty($PermissionRole))
                 <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'role') collapsed @endif"  href="{{ url('panel/role') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:account-cog-outline"></iconify-icon>
                     <span class="hide-menu">Role</span>
                 </a>
                 </li>
@@ -105,7 +112,7 @@
             @if(!empty($PermissionSetting))
                 <li class="sidebar-item">
                 <a class="sidebar-link primary-hover-bg @if(Request::segment(2) != 'setting') collapsed @endif"  href="{{ url('panel/setting') }}" aria-expanded="false">
-                    <iconify-icon icon="solar:shield-user-line-duotone"></iconify-icon>
+                    <iconify-icon icon="mdi:cog-outline"></iconify-icon>
                     <span class="hide-menu">Setting</span>
                 </a>
                 </li>

@@ -9,6 +9,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\PolicyController;
+use App\Http\Controllers\DocumentController;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -90,20 +91,21 @@ Route::prefix('panel/quotation')->group(function() {
     Route::post('panel/policy/edit/{id}', [PolicyController::class, 'update'])->name('policy.update');
     Route::get('panel/policy/delete/{id}', [PolicyController::class, 'delete'])->name('policy.delete');
     
-
+//Documents
+Route::middleware(['auth'])->group(function () {
+    Route::get('panel/document', [DocumentController::class, 'index'])->name('document.index');
+    Route::get('panel/document/create', [DocumentController::class, 'create'])->name('document.create');
+    Route::post('panel/document/store', [DocumentController::class, 'store'])->name('document.store');
+    Route::get('panel/document/download/{id}', [DocumentController::class, 'download'])->name('document.download');
+    Route::get('panel/document/delete/{id}', [DocumentController::class, 'destroy'])->name('document.delete');
+});
     
 
     
 
 
-    //Documents
-//     Route::get('panel/document', [DocumentController::class, 'list']);
-//     Route::get('panel/document/add', [DocumentController::class, 'add']);
-//     Route::post('panel/document/add', [DocumentController::class, 'insert']);
-//     Route::get('panel/document/edit/{id}', [DocumentController::class, 'edit']);
-//     Route::post('panel/document/edit/{id}', [DocumentController::class, 'update']);
-//     Route::get('panel/document/delete/{id}', [DocumentController::class, 'delete']);
-// });
+    
+    
 
 
 

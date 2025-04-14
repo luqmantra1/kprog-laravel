@@ -4,85 +4,108 @@ namespace App\Http\Controllers;
 
 use App\Models\Policy;
 use App\Models\Quotation;
+use App\Models\PermissionRoleModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PolicyController extends Controller
 {
-    // List all policies
     public function list()
     {
-        $policies = Policy::all();
-        return view('panel.policy.list', compact('policies'));
+        $PermissionPolicy = PermissionRoleModel::getPermission('Policy', Auth::user()->role_id);
+        if (empty($PermissionPolicy)) {
+            abort(404);
+        }
+
+        $data['PermissionAdd'] = PermissionRoleModel::getPermission('Add Policy', Auth::user()->role_id);
+        $data['PermissionEdit'] = PermissionRoleModel::getPermission('Edit Policy', Auth::user()->role_id);
+        $data['PermissionDelete'] = PermissionRoleModel::getPermission('Delete Policy', Auth::user()->role_id);
+
+        $data['getRecord'] = Policy::with('quotation')->orderBy('id', 'desc')->get();
+        return view('panel.policy.list', $data);
     }
 
-    // Show the form to add a new policy
     public function add()
-{
-    $quotations = Quotation::all();
-
-    // Auto-generate a unique policy number
-    $latestId = Policy::max('id') + 1;
-    $autoPolicyNumber = 'KPG' . str_pad($latestId, 7, '0', STR_PAD_LEFT);
-
-    return view('panel.policy.add', compact('quotations', 'autoPolicyNumber'));
-}
-
-    // Insert a new policy
-    public function insert(Request $request)
-{
-    $validated = $request->validate([
-        'quotation_id' => 'required|exists:quotation,id',
-        'start_date' => 'required|date',
-        'end_date' => 'required|date|after_or_equal:start_date',
-        'status' => 'required|in:active,expired,terminated,cancelled',
-    ]);
-
-    $latestId = Policy::max('id') + 1;
-    $policyNumber = 'KPG' . str_pad($latestId, 7, '0', STR_PAD_LEFT);
-
-    $policy = new Policy();
-    $policy->quotation_id = $request->quotation_id;
-    $policy->policy_number = $policyNumber; // Use generated one
-    $policy->status = $request->status;
-    $policy->start_date = $request->start_date;
-    $policy->end_date = $request->end_date;
-    $policy->save();
-
-    return redirect()->route('policy.list')->with('success', 'Policy added successfully!');
-}
-
-
-    // Show the form to edit an existing policy
-    public function edit($id)
     {
-        $policy = Policy::findOrFail($id);
-        $quotations = Quotation::all();
-        return view('panel.policy.edit', compact('policy', 'quotations'));
+        $PermissionAdd = PermissionRoleModel::getPermission('Add Policy', Auth::user()->role_id);
+        if (empty($PermissionAdd)) {
+            abort(404);
+        }
+
+        $data['quotations'] = Quotation::orderBy('id', 'desc')->get();
+        $latestId = Policy::max('id') + 1;
+        $data['autoPolicyNumber'] = 'KPG' . str_pad($latestId, 7, '0', STR_PAD_LEFT);
+
+        return view('panel.policy.add', $data);
     }
 
-    // Update an existing policy
-    public function update(Request $request, $id)
+    public function insert(Request $request)
     {
-        $request->validate([
+        $PermissionAdd = PermissionRoleModel::getPermission('Add Policy', Auth::user()->role_id);
+        if (empty($PermissionAdd)) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
             'quotation_id' => 'required|exists:quotation,id',
-            'policy_number' => 'required|string|max:100',
-            'status' => 'required|in:active,expired,terminated,cancelled',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'required|in:active,expired,terminated,cancelled',
         ]);
 
-        $policy = Policy::findOrFail($id);
-        $policy->update($request->all());
+        $latestId = Policy::max('id') + 1;
+        $policyNumber = 'KPG' . str_pad($latestId, 7, '0', STR_PAD_LEFT);
 
-        return redirect()->route('policy.list')->with('success', 'Policy updated successfully.');
+        $policy = new Policy;
+        $policy->quotation_id = $request->quotation_id;
+        $policy->policy_number = $policyNumber;
+        $policy->start_date = $request->start_date;
+        $policy->end_date = $request->end_date;
+        $policy->status = $request->status;
+        $policy->save();
+
+        return redirect('panel/policy')->with('success', 'Policy successfully created');
     }
 
-    // Delete a policy
+    public function edit($id)
+    {
+        $PermissionEdit = PermissionRoleModel::getPermission('Edit Policy', Auth::user()->role_id);
+        if (empty($PermissionEdit)) {
+            abort(404);
+        }
+
+        $data['getRecord'] = Policy::findOrFail($id);
+        $data['quotations'] = Quotation::orderBy('id', 'desc')->get();
+        return view('panel.policy.edit', $data);
+    }
+
+    public function update($id, Request $request)
+    {
+        $PermissionEdit = PermissionRoleModel::getPermission('Edit Policy', Auth::user()->role_id);
+        if (empty($PermissionEdit)) {
+            abort(404);
+        }
+
+        $policy = Policy::findOrFail($id);
+        $policy->quotation_id = $request->quotation_id;
+        $policy->start_date = $request->start_date;
+        $policy->end_date = $request->end_date;
+        $policy->status = $request->status;
+        $policy->save();
+
+        return redirect('panel/policy')->with('success', 'Policy successfully updated');
+    }
+
     public function delete($id)
     {
+        $PermissionDelete = PermissionRoleModel::getPermission('Delete Policy', Auth::user()->role_id);
+        if (empty($PermissionDelete)) {
+            abort(404);
+        }
+
         $policy = Policy::findOrFail($id);
         $policy->delete();
 
-        return redirect()->route('policy.list')->with('success', 'Policy deleted successfully.');
+        return redirect('panel/policy')->with('success', 'Policy successfully deleted');
     }
 }

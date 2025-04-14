@@ -12,7 +12,6 @@
                 <div class="card-body">
                     <form action="{{ url('panel/policy/edit/'.$policy->id) }}" method="POST">
                         @csrf
-                        @method('POST')
 
                         <div class="mb-4">
                             <label for="quotation_id" class="form-label">Quotation</label>

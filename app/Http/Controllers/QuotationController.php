@@ -6,12 +6,20 @@ use Illuminate\Http\Request;
 use App\Models\Quotation;
 use App\Models\Proposal;
 use App\Models\Client;
+use App\Models\PermissionRoleModel;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+
 
 class QuotationController extends Controller
 {
     public function list()
     {
+        $PermissionQuotation = PermissionRoleModel::getPermission('Quotation', Auth::user()->role_id);
+        if (empty($PermissionQuotation)) {
+            abort(404);
+        }
+
         $getRecord = Quotation::with('proposal.client')->get();
         return view('panel.quotation.list', compact('getRecord'));
     }
