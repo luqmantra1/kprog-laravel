@@ -13,7 +13,9 @@
 
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3>Policies</h3>
-
+        <a href="{{ route('policy.export') }}" class="btn btn-success mb-3">
+  <i class="ti ti-download me-1"></i> Export to Excel
+</a>
         {{-- Add Policy button (Only if permission exists) --}}
         @if(!empty($PermissionAdd))
           <a href="{{ url('panel/policy/add') }}" class="btn btn-primary">Add New Policy</a>

@@ -10,7 +10,9 @@
 
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0">Proposal List</h3>
-
+        <a href="{{ route('proposal.export') }}" class="btn btn-success mb-3">
+  <i class="ti ti-download me-1"></i> Export to Excel
+</a>
         <!-- Show Add Proposal button only if the user has permission -->
         @if(!empty($PermissionAdd))
         <a href="{{ url('panel/proposal/add') }}" class="btn btn-primary">Add Proposal</a>

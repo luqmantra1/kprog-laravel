@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProposalExport;
 use App\Models\AuditLog;
 use App\Models\PermissionModel;
 use App\Models\PermissionRoleModel;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\Proposal;
 use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProposalController extends Controller
 {
@@ -138,5 +140,9 @@ public function delete($id)
     return redirect('panel/proposal')->with('success', 'Proposal successfully deleted');
 }
 
+public function exportProposalReport()
+{
+    return Excel::download(new ProposalExport, 'Proposal_report.xlsx');
+}
 }
 

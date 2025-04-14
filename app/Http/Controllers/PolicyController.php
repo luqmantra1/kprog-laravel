@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PolicyExport;
 use App\Models\AuditLog;
 use App\Models\Policy;
 use App\Models\Quotation;
 use App\Models\PermissionRoleModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PolicyController extends Controller
 {
@@ -165,4 +167,8 @@ public function delete($id)
     return redirect('panel/policy')->with('success', 'Policy successfully deleted');
 }
 
+public function exportPolicyReport()
+{
+    return Excel::download(new PolicyExport, 'policies_report.xlsx');
+}
 }

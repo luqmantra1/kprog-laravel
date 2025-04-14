@@ -10,6 +10,9 @@
 
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3>Quotation List</h3>
+        <a href="{{ route('quotation.export') }}" class="btn btn-success mb-3">
+  <i class="ti ti-download me-1"></i> Export to Excel
+</a>
         <a href="{{ url('panel/quotation/add') }}" class="btn btn-primary">Add Quotation</a>
       </div>
 

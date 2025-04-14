@@ -7,6 +7,8 @@ use App\Models\PermissionRoleModel;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Exports\ClientExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ClientController extends Controller
 {
@@ -133,4 +135,9 @@ class ClientController extends Controller
 
         return redirect('panel/client')->with('success', 'Client deleted successfully!');
     }
+
+    public function exportClientReport()
+{
+    return Excel::download(new ClientExport, 'clients_report.xlsx');
+}
 }

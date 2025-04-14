@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\QuotationExport;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use App\Models\Quotation;
@@ -10,6 +11,7 @@ use App\Models\Client;
 use App\Models\PermissionRoleModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class QuotationController extends Controller
@@ -201,4 +203,8 @@ AuditLog::create([
     return redirect()->route('quotation.list')->with('success', 'Quotation deleted successfully!');
 }
 
+public function exportQuotationReport()
+{
+    return Excel::download(new QuotationExport, 'Quotation_report.xlsx');
+}
 }

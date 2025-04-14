@@ -45,6 +45,8 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('panel/user/edit/{id}', [UserController::class, 'edit']);
     Route::post('panel/user/edit/{id}', [UserController::class, 'update']);
     Route::get('panel/user/delete/{id}', [UserController::class, 'delete']);
+    
+
 
 });
     // CLIENT ROUTES
@@ -55,6 +57,7 @@ Route::group(['middleware' => 'useradmin'], function () {
     Route::get('edit/{id}', [ClientController::class, 'edit']);
     Route::post('edit/{id}', [ClientController::class, 'update']);
     Route::get('delete/{id}', [ClientController::class, 'delete']);
+    Route::get('panel/client/export', [ClientController::class, 'exportClientReport'])->name('client.export');
 });
 
 Route::prefix('panel/proposal')->group(function () {
@@ -65,6 +68,7 @@ Route::prefix('panel/proposal')->group(function () {
     Route::post('update/{id}', [ProposalController::class, 'update']);
     Route::get('delete/{id}', [ProposalController::class, 'delete']);
 });
+Route::get('panel/proposal/export', [ProposalController::class, 'exportProposalReport'])->name('proposal.export');
 
 // Quotation Routes
 Route::prefix('panel/quotation')->group(function() {
@@ -81,6 +85,7 @@ Route::prefix('panel/quotation')->group(function() {
     
     // Delete a quotation
     Route::get('delete/{id}', [QuotationController::class, 'delete'])->name('quotation.delete');
+    Route::get('panel/quotation/export', [QuotationController::class, 'exportQuotationReport'])->name('quotation.export');
 });
 
     //Policies
@@ -90,6 +95,7 @@ Route::prefix('panel/quotation')->group(function() {
     Route::get('panel/policy/edit/{id}', [PolicyController::class, 'edit'])->name('policy.edit');
     Route::post('panel/policy/edit/{id}', [PolicyController::class, 'update'])->name('policy.update');
     Route::get('panel/policy/delete/{id}', [PolicyController::class, 'delete'])->name('policy.delete');
+    Route::get('panel/policy/export', [PolicyController::class, 'exportPolicyReport'])->name('policy.export');
     
 //Documents
 Route::middleware(['auth'])->group(function () {
