@@ -30,7 +30,9 @@
               <th>Status</th>
               <th>Start Date</th>
               <th>End Date</th>
+              @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <th class="text-center">Actions</th>
+              @endif
             </tr>
           </thead>
           <tbody>
@@ -48,8 +50,9 @@
                 </td>
                 <td>{{ \Carbon\Carbon::parse($policy->start_date)->format('d M Y') }}</td>
                 <td>{{ \Carbon\Carbon::parse($policy->end_date)->format('d M Y') }}</td>
+                @if(!empty($PermissionEdit) || !empty($PermissionDelete))
                 <td class="text-center">
-
+                @endif
                   {{-- Edit button --}}
                   @if(!empty($PermissionEdit))
                     <a href="{{ url('panel/policy/edit/'.$policy->id) }}" class="btn btn-sm btn-warning">Edit</a>

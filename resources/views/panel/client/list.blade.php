@@ -29,7 +29,9 @@
               <th>Email</th>
               <th>Phone</th>
               <th>Created At</th>
+              @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <th class="text-center">Actions</th>
+              @endif
             </tr>
           </thead>
           <tbody>
@@ -41,6 +43,7 @@
               <td>{{ $value->email }}</td>
               <td>{{ $value->phone }}</td>
               <td>{{ \Carbon\Carbon::parse($value->created_at)->format('d M Y') }}</td>
+              @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <td class="text-center">
               @if(!empty($PermissionEdit))
                 <a href="{{ url('panel/client/edit/'.$value->id) }}" class="btn btn-sm btn-warning">Edit</a>
@@ -50,7 +53,7 @@
                 <a href="{{ url('panel/client/delete/'.$value->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this client?')">Delete</a>
               @endif
             </td>
-
+            @endif
             </tr>
             @empty
             <tr>
