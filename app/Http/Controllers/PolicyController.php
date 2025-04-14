@@ -9,6 +9,7 @@ use App\Models\Quotation;
 use App\Models\PermissionRoleModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PolicyController extends Controller
@@ -24,7 +25,16 @@ class PolicyController extends Controller
         $data['PermissionEdit'] = PermissionRoleModel::getPermission('Edit Policy', Auth::user()->role_id);
         $data['PermissionDelete'] = PermissionRoleModel::getPermission('Delete Policy', Auth::user()->role_id);
 
-        $data['getRecord'] = Policy::with('quotation')->orderBy('id', 'desc')->get();
+         // Get all policies with quotation and client
+    $data['getRecord'] = Policy::with(['quotation.client'])->orderBy('id', 'desc')->get();
+
+    // Add file URL if policy has file path (optional, depends if you're storing files for policies)
+    foreach ($data['getRecord'] as $policy) {
+        if (!empty($policy->policy_file)) {
+            $policy->file_url = asset('storage/' . $policy->policy_file);
+        }
+    }
+    
         return view('panel.policy.list', $data);
     }
 
@@ -65,10 +75,23 @@ class PolicyController extends Controller
     $policy->start_date = $request->start_date;
     $policy->end_date = $request->end_date;
     $policy->status = $request->status;
+
+    // Handle proposal file upload using Storage
+    if ($request->hasFile('policy_file')) {
+        $file = $request->file('policy_file');
+        $filename = time() . '_' . $file->getClientOriginalName();
+
+        // Store file in storage/app/public/proposals
+        $path = $file->storeAs('policy', $filename, 'public');
+
+        // Save the relative path (or just filename)
+        $policy->policy_file = $path; // Or use $filename if you're using just the name
+    }
     $policy->save();
 
     // Log the action in AuditLog
     $auditDescription = 'Added new policy with Policy Number: ' . $policy->policy_number;
+    
     AuditLog::create([
         'user_id' => Auth::id(),
         'action' => 'Add Policy',
@@ -79,19 +102,25 @@ class PolicyController extends Controller
 }
 
 
-    public function edit($id)
-    {
-        $PermissionEdit = PermissionRoleModel::getPermission('Edit Policy', Auth::user()->role_id);
-        if (empty($PermissionEdit)) {
-            abort(404);
-        }
-
-        $data['getRecord'] = Policy::findOrFail($id);
-        $data['quotations'] = Quotation::orderBy('id', 'desc')->get();
-        return view('panel.policy.edit', $data);
+public function edit($id)
+{
+    $PermissionEdit = PermissionRoleModel::getPermission('Edit Policy', Auth::user()->role_id);
+    if (empty($PermissionEdit)) {
+        abort(404);
     }
 
-    public function update(Request $request, $id)
+    // Retrieve the policy record
+    $data['getRecord'] = Policy::findOrFail($id);
+    $data['quotations'] = Quotation::orderBy('id', 'desc')->get();
+
+    // Check if a policy file exists and pass the URL to the view
+    $data['file_url'] = asset('storage/' . $data['getRecord']->policy_file);
+
+    return view('panel.policy.edit', $data);
+}
+
+
+public function update(Request $request, $id)
 {
     // Validate the incoming request
     $request->validate([
@@ -100,6 +129,7 @@ class PolicyController extends Controller
         'status' => 'required|in:active,expired,terminated,cancelled',
         'start_date' => 'required|date',
         'end_date' => 'required|date|after_or_equal:start_date',
+        'policy_file' => 'nullable|mimes:pdf|max:2048', // Add validation for file
     ]);
 
     // Find the policy by ID
@@ -114,6 +144,20 @@ class PolicyController extends Controller
     $policy->status = $request->status;
     $policy->start_date = $request->start_date;
     $policy->end_date = $request->end_date;
+
+    // Check if a new file is uploaded
+    if ($request->hasFile('policy_file')) {
+        // Delete old file if it exists
+        if ($policy->policy_file && Storage::disk('public')->exists($policy->policy_file)) {
+            Storage::disk('public')->delete($policy->policy_file);
+        }
+
+        // Upload new file
+        $filePath = $request->file('policy_file')->store('policies', 'public');
+        $policy->policy_file = $filePath;
+    }
+
+    // Save the updated policy
     $policy->save();
 
     // Detect changes and prepare the change log
@@ -140,6 +184,7 @@ class PolicyController extends Controller
     // Redirect to the policy list page with a success message
     return redirect()->to('panel/policy')->with('success', 'Policy updated successfully.');
 }
+
 
 
 

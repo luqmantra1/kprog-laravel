@@ -32,6 +32,7 @@
               <th>Acceptance</th>
               <th>Policy Status</th>
               <th>Date</th>
+              <th>File</th>
               @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <th class="text-center">Actions</th>
               @endif
@@ -89,6 +90,17 @@
               </td>
 
               <td>{{ \Carbon\Carbon::parse($quotation->created_at)->format('d M Y') }}</td>
+              <!-- File Column -->
+              <td>
+                  @if($quotation->quotation_file)
+                    <a href="{{ asset('public/storage/' . $quotation->quotation_file) }}" target="_blank" class="btn btn-sm btn-info">
+                      View File
+                    </a>
+                  @else
+                    <span class="text-muted">No File</span>
+                  @endif
+                </td>
+
               @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <td class="text-center">
               @if(!empty($PermissionEdit))

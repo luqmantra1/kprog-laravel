@@ -11,8 +11,8 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0">Proposal List</h3>
         <a href="{{ route('proposal.export') }}" class="btn btn-success mb-3">
-  <i class="ti ti-download me-1"></i> Export to Excel
-</a>
+          <i class="ti ti-download me-1"></i> Export to Excel
+        </a>
         <!-- Show Add Proposal button only if the user has permission -->
         @if(!empty($PermissionAdd))
         <a href="{{ url('panel/proposal/add') }}" class="btn btn-primary">Add Proposal</a>
@@ -29,6 +29,7 @@
               <th scope="col">Submission Date</th>
               <th scope="col">Status</th>
               <th scope="col">Created At</th>
+              <th scope="col">File</th> <!-- Added a column for the file link -->
 
               <!-- Show Action column only if the user has permission for Edit or Delete -->
               @if(!empty($PermissionEdit) || !empty($PermissionDelete))
@@ -56,6 +57,15 @@
               </td>
               <td>{{ \Carbon\Carbon::parse($value->created_at)->format('d M Y') }}</td>
 
+              <!-- Added file column with download or view link -->
+              <td>
+                @if($value->proposal_file)
+                  <a href="{{ asset('public/storage/' . $value->proposal_file) }}" target="_blank" class="btn btn-sm btn-info">View Proposal</a>
+                @else
+                  No file uploaded
+                @endif
+              </td>
+
               <!-- Show action buttons based on permissions -->
               @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <td class="text-center">
@@ -70,7 +80,7 @@
             </tr>
             @empty
             <tr>
-              <td colspan="7" class="text-center">No proposals found.</td>
+              <td colspan="8" class="text-center">No proposals found.</td>
             </tr>
             @endforelse
           </tbody>

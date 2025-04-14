@@ -21,7 +21,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ url('panel/policy/add') }}" method="POST">
+                    <form action="{{ url('panel/policy/add') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-4">
@@ -62,6 +62,10 @@
                             @enderror
                         </div>
 
+                        <div class="form-group">
+                            <label>Upload Policy File</label>
+                            <input type="file" name="policy_file" class="form-control">
+                        </div>
                         <div class="mb-4">
                             <label for="start_date" class="form-label">Start Date</label>
                             <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" value="{{ old('start_date') }}" required>

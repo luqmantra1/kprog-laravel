@@ -10,7 +10,7 @@
             <h4>Edit Proposal</h4>
           </div>
           <div class="card-body">
-            <form method="POST" action="{{ url('panel/proposal/update/'.$getRecord->id) }}">
+            <form method="POST" action="{{ url('panel/proposal/update/'.$getRecord->id) }}" enctype="multipart/form-data">
               @csrf
 
               <!-- Client Selection -->
@@ -56,6 +56,16 @@
                   <option value="submitted" {{ $getRecord->status == 'submitted' ? 'selected' : '' }}>Submitted</option>
                   <option value="reviewed" {{ $getRecord->status == 'reviewed' ? 'selected' : '' }}>Reviewed</option>
                 </select>
+              </div>
+
+              <!-- File Upload (Optional) -->
+              <div class="mb-3">
+                <label for="proposal_file" class="form-label">Proposal File (PDF)</label>
+                <input type="file" name="proposal_file" class="form-control" accept="application/pdf">
+                
+                @if($getRecord->proposal_file)
+                  <small class="mt-2 d-block">Current File: <a href="{{ asset('public/storage/' . $getRecord->proposal_file) }}" target="_blank">{{ basename($getRecord->proposal_file) }}</a></small>
+                @endif
               </div>
 
               <!-- Action Buttons -->

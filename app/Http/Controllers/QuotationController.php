@@ -29,7 +29,15 @@ class QuotationController extends Controller
     $PermissionDelete = PermissionRoleModel::getPermission('Delete Quotation', Auth::user()->role_id);
 
         $getRecord = Quotation::with('proposal.client')->get();
-        return view('panel.quotation.list', compact('getRecord','PermissionAdd', 'PermissionEdit', 'PermissionDelete'));
+
+        // Get all quotations with client details via proposal relation
+    $data['getRecord'] = Quotation::with('proposal.client')->orderBy('id', 'desc')->get();
+
+        // Add file URLs for each quotation
+    foreach ($data['getRecord'] as $quotation) {
+        $quotation->file_url = asset('storage/' . $quotation->quotation_file); // Full file URL for viewing
+    }
+        return view('panel.quotation.list', $data , compact('getRecord','PermissionAdd', 'PermissionEdit', 'PermissionDelete'));
     }
 
     public function add()
@@ -69,17 +77,6 @@ class QuotationController extends Controller
         }
 
         // Create the quotation
-        Quotation::create([
-            'client_id' => $proposal->client->id, // from proposal relationship
-            'proposal_id' => $request->proposal_id,
-            'insurance_company' => $request->insurance_company,
-            'quotation_number' => $quotationNumber,
-            'amount' => $request->amount,
-            'quotation_file' => $filePath,
-            'status' => $request->status,
-            'acceptance_status' => $request->acceptance_status,
-            'policy_status' => $request->policy_status,
-        ]);
 
         $quotation = Quotation::create([
             'client_id' => $proposal->client->id,
@@ -134,7 +131,15 @@ class QuotationController extends Controller
     $clients = Client::all();
     $getProposal = Proposal::with('client')->get();
 
-    return view('panel.quotation.edit', compact('quotation', 'clients', 'getProposal'));
+    // Retrieve quotation data
+    $data['getRecord'] = Quotation::findOrFail($id);
+    $data['clients'] = Client::orderBy('company_name')->get();
+    $data['getProposal'] = Proposal::with('client')->get();
+
+    // Pass the file URL to the view
+    $data['file_url'] = asset('public/storage/' . $data['getRecord']->quotation_file);
+
+    return view('panel.quotation.edit', $data , compact('quotation', 'clients', 'getProposal'));
 }
 
 public function update(Request $request, $id)
@@ -155,15 +160,13 @@ public function update(Request $request, $id)
 
     if ($request->hasFile('quotation_file')) {
         // Delete old file if exists
-        if ($quotation->quotation_file && file_exists(public_path('uploads/quotations/' . $quotation->quotation_file))) {
-            unlink(public_path('uploads/quotations/' . $quotation->quotation_file));
+        if ($quotation->quotation_file && Storage::disk('public')->exists($quotation->quotation_file)) {
+            Storage::disk('public')->delete($quotation->quotation_file);
         }
-
+    
         // Upload new file
-        $file = $request->file('quotation_file');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('uploads/quotations'), $filename);
-        $quotation->quotation_file = $filename;
+        $filePath = $request->file('quotation_file')->store('quotations', 'public');
+        $quotation->quotation_file = $filePath;
     }
 
     // Update fields

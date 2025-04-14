@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form action="{{ url('panel/policy/edit/'.$getRecord->id) }}" method="POST">
+                    <form action="{{ url('panel/policy/edit/'.$getRecord->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-4">
@@ -27,7 +27,7 @@
 
                         <div class="mb-4">
                             <label for="policy_number" class="form-label">Policy Number</label>
-                            <input type="text" class="form-control" name="policy_number" value="{{ $getRecord->policy_number }}" required placeholder="Enter policy number">
+                            <input type="text" class="form-control" name="policy_number" value="{{ $getRecord->policy_number }}" required placeholder="Enter policy number" readonly>
                         </div>
 
                         <div class="mb-4">
@@ -48,6 +48,21 @@
                         <div class="mb-4">
                             <label for="end_date" class="form-label">End Date</label>
                             <input type="date" class="form-control" name="end_date" value="{{ $getRecord->end_date }}" required>
+                        </div>
+
+                        <!-- Display Existing Policy File -->
+                        @if(!empty($getRecord->policy_file))
+                            <div class="mb-4">
+                                <label class="form-label">Current Policy File : </label>
+                                <a href="{{ asset('public/storage/' . $getRecord->policy_file) }}" target="_blank" class="btn btn-info">View Current File</a>
+                                <small class="d-block mt-2">If you wish to update the file, upload a new one below.</small>
+                            </div>
+                        @endif
+
+                        <!-- Policy File Upload -->
+                        <div class="mb-4">
+                            <label for="policy_file" class="form-label">Upload New Policy File (Optional)</label>
+                            <input type="file" class="form-control" name="policy_file" accept="application/pdf">
                         </div>
 
                         <div class="d-flex justify-content-end">

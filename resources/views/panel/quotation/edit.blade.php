@@ -11,7 +11,6 @@
 
         <form action="{{ url('panel/quotation/edit/' . $quotation->id) }}" method="POST" enctype="multipart/form-data">
           @csrf
-          @method('POST')
 
           <div class="card-body">
             <div class="row">
@@ -60,16 +59,15 @@
               <input type="number" step="0.01" class="form-control" name="amount" value="{{ $quotation->amount }}" required>
             </div>
 
-            <!-- Quotation File (PDF) -->
-            <div class="mb-4" style="display: none;">
-              <label class="form-label">Replace Quotation File (PDF only)</label>
-              <input type="file" class="form-control" name="quotation_file" accept="application/pdf">
-              @if($quotation->quotation_file)
-                <p class="mt-2">
-                  <a href="{{ asset('uploads/quotations/' . $quotation->quotation_file) }}" target="_blank" class="text-info">View Current File</a>
-                </p>
+            <!-- File Upload -->
+            <div class="mb-4">
+              <label class="form-label">Upload Quotation File (not more than 2mb.max)</label>
+              <input type="file" name="quotation_file" class="form-control" accept="application/pdf">
+              @if (!empty($file_url))
+                <a href="{{ $file_url }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">View Existing File</a>
               @endif
             </div>
+
 
             <!-- Status Dropdown -->
             <div class="mb-4">

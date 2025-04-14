@@ -10,7 +10,7 @@
             <h4>Add Proposal</h4>
           </div>
           <div class="card-body">
-            <form method="POST" action="{{ url('panel/proposal/insert') }}">
+            <form method="POST" action="{{ url('panel/proposal/insert') }}" enctype="multipart/form-data">
               @csrf
 
               <!-- Client Selection -->
@@ -41,9 +41,9 @@
               </div>
 
               <!-- Insurance Type (Optional) -->
-              <div class="mb-3">
-                <label for="insurance_type" class="form-label">Insurance Type</label>
-                <input type="text" name="insurance_type" class="form-control" placeholder="Enter Insurance Type (Optional)">
+              <div class="form-group">
+                  <label>Upload Proposal File</label>
+                  <input type="file" name="proposal_file" class="form-control">
               </div>
 
               <!-- Submission Date -->

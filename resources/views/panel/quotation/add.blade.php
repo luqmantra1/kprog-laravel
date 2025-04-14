@@ -54,6 +54,12 @@
                 <label for="amount" class="form-label">Amount (RM)</label>
                 <input type="number" step="0.01" class="form-control" name="amount" required>
               </div>
+              
+              <!-- Optional Quotation File Upload -->
+              <div class="mb-3">
+                <label for="quotation_file" class="form-label">Upload Quotation (not more than 2mb.max)</label>
+                <input type="file" name="quotation_file" class="form-control" id="quotation_file">
+              </div>
 
               <!-- Status -->
               <div class="mb-3">
@@ -100,6 +106,10 @@
     </div>
   </div>
 </div>
+
+<input type="hidden" name="quotation_number" id="quotation_number">
+<input type="hidden" name="client_id" id="client_id">
+
 @endsection
 
 @section('scripts')

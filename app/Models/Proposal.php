@@ -16,6 +16,7 @@ class Proposal extends Model
         'proposal_title',
         'submission_date',
         'status',
+        'proposal_file',
     ];
 
     public function client()
