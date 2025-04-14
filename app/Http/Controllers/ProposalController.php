@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\PermissionModel;
 use App\Models\PermissionRoleModel;
 use Illuminate\Http\Request;
@@ -43,23 +44,31 @@ class ProposalController extends Controller
     }
 
     public function insert(Request $request)
-    {
-        // Check permission for inserting proposals
-        $PermissionProposal = PermissionRoleModel::getPermission('Add Proposal', Auth::user()->role_id);
-        if (empty($PermissionProposal)) {
-            abort(404);
-        }
-
-        // Insert proposal data into the database
-        $proposal = new Proposal;
-        $proposal->client_id = $request->client_id;
-        $proposal->proposal_title = $request->proposal_title;
-        $proposal->submission_date = $request->submission_date;
-        $proposal->status = $request->status;
-        $proposal->save();
-
-        return redirect('panel/proposal')->with('success', 'Proposal successfully created');
+{
+    // Check permission for inserting proposals
+    $PermissionProposal = PermissionRoleModel::getPermission('Add Proposal', Auth::user()->role_id);
+    if (empty($PermissionProposal)) {
+        abort(404);
     }
+
+    // Insert proposal data into the database
+    $proposal = new Proposal;
+    $proposal->client_id = $request->client_id;
+    $proposal->proposal_title = $request->proposal_title;
+    $proposal->submission_date = $request->submission_date;
+    $proposal->status = $request->status;
+    $proposal->save();
+
+    // Log Audit for Add
+    AuditLog::create([
+        'user_id' => Auth::id(),
+        'action' => 'Add Proposal',
+        'description' => 'Added new proposal: ' . $proposal->proposal_title,
+    ]);
+
+    return redirect('panel/proposal')->with('success', 'Proposal successfully created');
+}
+
 
     public function edit($id)
     {
@@ -76,37 +85,58 @@ class ProposalController extends Controller
     }
 
     public function update($id, Request $request)
-    {
-        // Check permission for updating proposals
-        $PermissionProposal = PermissionRoleModel::getPermission('Edit Proposal', Auth::user()->role_id);
-        if (empty($PermissionProposal)) {
-            abort(404);
-        }
-
-        // Update proposal data
-        $proposal = Proposal::findOrFail($id);
-        $proposal->client_id = $request->client_id;
-        $proposal->proposal_title = $request->proposal_title;
-        $proposal->submission_date = $request->submission_date;
-        $proposal->status = $request->status;
-        $proposal->save();
-
-        return redirect('panel/proposal')->with('success', 'Proposal successfully updated');
+{
+    // Check permission for updating proposals
+    $PermissionProposal = PermissionRoleModel::getPermission('Edit Proposal', Auth::user()->role_id);
+    if (empty($PermissionProposal)) {
+        abort(404);
     }
 
-    public function delete($id)
-    {
-        // Check permission for deleting proposals
-        $PermissionProposal = PermissionRoleModel::getPermission('Delete Proposal', Auth::user()->role_id);
-        if (empty($PermissionProposal)) {
-            abort(404);
-        }
+    // Update proposal data
+    $proposal = Proposal::findOrFail($id);
+    $oldProposalTitle = $proposal->proposal_title;  // Save old value for logging
 
-        // Delete proposal data
-        $proposal = Proposal::findOrFail($id);
-        $proposal->delete();
+    $proposal->client_id = $request->client_id;
+    $proposal->proposal_title = $request->proposal_title;
+    $proposal->submission_date = $request->submission_date;
+    $proposal->status = $request->status;
+    $proposal->save();
 
-        return redirect('panel/proposal')->with('success', 'Proposal successfully deleted');
+    // Log Audit for Update
+    AuditLog::create([
+        'user_id' => Auth::id(),
+        'action' => 'Update Proposal',
+        'description' => 'Updated proposal: ' . $oldProposalTitle . ' to ' . $proposal->proposal_title,
+    ]);
+
+    return redirect('panel/proposal')->with('success', 'Proposal successfully updated');
+}
+
+
+public function delete($id)
+{
+    // Check permission for deleting proposals
+    $PermissionProposal = PermissionRoleModel::getPermission('Delete Proposal', Auth::user()->role_id);
+    if (empty($PermissionProposal)) {
+        abort(404);
     }
+
+    // Get proposal to be deleted
+    $proposal = Proposal::findOrFail($id);
+    $proposalTitle = $proposal->proposal_title;  // Save title for logging
+
+    // Log Audit for Delete
+    AuditLog::create([
+        'user_id' => Auth::id(),
+        'action' => 'Delete Proposal',
+        'description' => 'Deleted proposal: ' . $proposalTitle,
+    ]);
+
+    // Delete proposal
+    $proposal->delete();
+
+    return redirect('panel/proposal')->with('success', 'Proposal successfully deleted');
+}
+
 }
 

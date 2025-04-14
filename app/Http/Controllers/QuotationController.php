@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use App\Models\Quotation;
 use App\Models\Proposal;
@@ -73,6 +74,28 @@ class QuotationController extends Controller
             'policy_status' => $request->policy_status,
         ]);
 
+        $quotation = Quotation::create([
+            'client_id' => $proposal->client->id,
+            'proposal_id' => $request->proposal_id,
+            'insurance_company' => $request->insurance_company,
+            'quotation_number' => $quotationNumber,
+            'amount' => $request->amount,
+            'quotation_file' => $filePath,
+            'status' => $request->status,
+            'acceptance_status' => $request->acceptance_status,
+            'policy_status' => $request->policy_status,
+        ]);
+        
+        // Log Audit for Add
+        AuditLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'Add Quotation',
+            'description' => 'Added new quotation: ' . $quotation->quotation_number,
+        ]);
+        
+
+        
+
         return redirect()->route('quotation.list')->with('success', 'Quotation added successfully!');
     }
 
@@ -143,6 +166,14 @@ public function update(Request $request, $id)
     $quotation->policy_status = $request->policy_status;
     $quotation->save();
 
+    // Log Audit for Update
+AuditLog::create([
+    'user_id' => Auth::id(),
+    'action' => 'Update Quotation',
+    'description' => 'Updated quotation: ' . $quotation->quotation_number,
+]);
+
+
     return redirect()->route('quotation.list')->with('success', 'Quotation updated successfully!');
 }
 
@@ -158,6 +189,14 @@ public function delete($id)
 
     // Delete the quotation record
     $quotation->delete();
+
+    // Log Audit for Delete
+AuditLog::create([
+    'user_id' => Auth::id(),
+    'action' => 'Delete Quotation',
+    'description' => 'Deleted quotation: ' . $quotation->quotation_number,
+]);
+
 
     return redirect()->route('quotation.list')->with('success', 'Quotation deleted successfully!');
 }

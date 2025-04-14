@@ -52,21 +52,20 @@
         <div class="col-md-12 mb-4">
           <div class="card shadow-sm border-0 rounded">
             <div class="card-body">
-              <h5 class="card-title">Recent Activity</h5>
-              <ul class="list-group">
-                <li class="list-group-item">
-                  <strong>John Doe</strong> added a new proposal.
-                  <span class="badge bg-success float-end">Today</span>
-                </li>
-                <li class="list-group-item">
-                  <strong>Jane Smith</strong> approved a new policy.
-                  <span class="badge bg-warning float-end">Yesterday</span>
-                </li>
-                <li class="list-group-item">
-                  <strong>Michael Brown</strong> updated a client record.
-                  <span class="badge bg-danger float-end">2 days ago</span>
-                </li>
-              </ul>
+            <h5 class="card-title">Recent Activity</h5>
+<ul class="list-group">
+    @forelse ($recentActivities as $activity)
+        <li class="list-group-item">
+            <strong>{{ $activity->user->name ?? 'Unknown User' }}</strong>
+            {{ $activity->action }} –
+            <small>{{ $activity->description }}</small>
+            <span class="badge bg-secondary float-end">{{ $activity->created_at->diffForHumans() }}</span>
+        </li>
+    @empty
+        <li class="list-group-item text-muted">No recent activity</li>
+    @endforelse
+</ul>
+
             </div>
           </div>
         </div>
