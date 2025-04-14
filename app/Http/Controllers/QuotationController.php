@@ -12,6 +12,9 @@ use App\Models\PermissionRoleModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Mail\AuditEmail;
+use Illuminate\Support\Facades\Mail;
+
 
 
 class QuotationController extends Controller
@@ -91,14 +94,17 @@ class QuotationController extends Controller
         ]);
         
         // Log Audit for Add
-        AuditLog::create([
+        $auditLog = [
             'user_id' => Auth::id(),
             'action' => 'Add Quotation',
             'description' => 'Added new quotation: ' . $quotation->quotation_number,
-        ]);
-        
+        ];
+    
+        AuditLog::create($auditLog);
+    
+        // Send email to a fixed admin/ceo email
+        Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
 
-        
 
         return redirect()->route('quotation.list')->with('success', 'Quotation added successfully!');
     }
@@ -180,12 +186,19 @@ public function update(Request $request, $id)
     $quotation->policy_status = $request->policy_status;
     $quotation->save();
 
-    // Log Audit for Update
-AuditLog::create([
+    // Log Audit
+$auditLog = [
     'user_id' => Auth::id(),
     'action' => 'Update Quotation',
     'description' => 'Updated quotation: ' . $quotation->quotation_number,
-]);
+];
+
+AuditLog::create($auditLog);
+
+// Send email to a fixed admin/ceo email
+Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
+
+
 
 
     return redirect()->route('quotation.list')->with('success', 'Quotation updated successfully!');
@@ -209,11 +222,18 @@ public function delete($id)
     $quotation->delete();
 
     // Log Audit for Delete
-AuditLog::create([
+$auditLog = [
     'user_id' => Auth::id(),
     'action' => 'Delete Quotation',
     'description' => 'Deleted quotation: ' . $quotation->quotation_number,
-]);
+];
+
+AuditLog::create($auditLog);
+
+// Send email to a fixed admin/ceo email
+Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
+
+
 
 
     return redirect()->route('quotation.list')->with('success', 'Quotation deleted successfully!');

@@ -12,7 +12,9 @@ use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\AuditEmail;
 use Illuminate\Support\Facades\Mail;
+
 
 class ProposalController extends Controller
 {
@@ -78,12 +80,18 @@ class ProposalController extends Controller
     }
 
     $proposal->save();
-
-    AuditLog::create([
+    
+    
+    $auditLog = [
         'user_id' => Auth::id(),
         'action' => 'Add Proposal',
-        'description' => 'Added new proposal: ' . $proposal->proposal_title,
-    ]);
+        'description' => 'Added new proposal: ' . $proposal->proposal_title ,
+    ];
+
+    AuditLog::create($auditLog);
+
+    // Send email to a fixed admin/ceo email
+    Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
 
     return redirect('panel/proposal')->with('success', 'Proposal successfully created');
 }
@@ -148,12 +156,18 @@ class ProposalController extends Controller
     $proposal->status = $request->status;
     $proposal->save();
 
+    $Status = $proposal->status;  // Save title for logging
     // Log Audit
-    AuditLog::create([
+    $auditLog = [
         'user_id' => Auth::id(),
         'action' => 'Update Proposal',
-        'description' => 'Updated proposal: ' . $oldProposalTitle . ' to ' . $proposal->proposal_title,
-    ]);
+        'description' => 'Updated proposal: '  . $proposal->proposal_title .'is' . $Status,
+    ];
+
+    AuditLog::create($auditLog);
+
+    // Send email to a fixed admin/ceo email
+    Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
 
     return redirect('panel/proposal')->with('success', 'Proposal successfully updated');
 }
@@ -171,13 +185,19 @@ public function delete($id)
     // Get proposal to be deleted
     $proposal = Proposal::findOrFail($id);
     $proposalTitle = $proposal->proposal_title;  // Save title for logging
+    
 
     // Log Audit for Delete
-    AuditLog::create([
+    $auditLog = [
         'user_id' => Auth::id(),
         'action' => 'Delete Proposal',
         'description' => 'Deleted proposal: ' . $proposalTitle,
-    ]);
+    ];
+
+    AuditLog::create($auditLog);
+
+    // Send email to a fixed admin/ceo email
+    Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
 
     // Delete proposal
     $proposal->delete();

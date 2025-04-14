@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Exports\ClientExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Mail\AuditEmail;
+use Illuminate\Support\Facades\Mail;
 
 class ClientController extends Controller
 {
@@ -51,11 +53,16 @@ class ClientController extends Controller
         $client->save();
 
         // Log Audit for Add
-        AuditLog::create([
+        $auditLog = [
             'user_id' => Auth::id(),
             'action' => 'Add Client',
             'description' => 'Added new client: ' . $client->company_name,
-        ]);
+        ];
+    
+        AuditLog::create($auditLog);
+    
+        // Send email to a fixed admin/ceo email
+        Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
 
         return redirect('panel/client')->with('success', 'Client added successfully!');
     }
@@ -103,14 +110,20 @@ class ClientController extends Controller
 
         if (!empty($changes)) {
             $changeDescription = 'Updated client: ' . $client->company_name . ' | Changes: ' . implode(', ', $changes);
-
-            // Log the audit for Update
-            AuditLog::create([
+            // Log Audit
+            $auditLog = [
                 'user_id' => Auth::id(),
                 'action' => 'Update Client',
                 'description' => $changeDescription,
-            ]);
+            ];
+
+            AuditLog::create($auditLog);
+
+            // Send email to a fixed admin/ceo email
+            Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
         }
+
+        
 
         return redirect('panel/client')->with('success', 'Client updated successfully!');
     }
@@ -126,12 +139,19 @@ class ClientController extends Controller
 
         $client->delete();
 
-        // Log the Audit for Delete
-        AuditLog::create([
-            'user_id' => Auth::id(),
+        // Log Audit for Delete
+    $auditLog = [
+        'user_id' => Auth::id(),
             'action' => 'Delete Client',
             'description' => 'Deleted client: ' . $clientName,
-        ]);
+    ];
+
+    AuditLog::create($auditLog);
+
+    // Send email to a fixed admin/ceo email
+    Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
+
+        
 
         return redirect('panel/client')->with('success', 'Client deleted successfully!');
     }

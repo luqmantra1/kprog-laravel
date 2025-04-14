@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Mail\AuditEmail;
+use Illuminate\Support\Facades\Mail;
 
 class PolicyController extends Controller
 {
@@ -91,12 +93,20 @@ class PolicyController extends Controller
 
     // Log the action in AuditLog
     $auditDescription = 'Added new policy with Policy Number: ' . $policy->policy_number;
-    
-    AuditLog::create([
+
+    // Log Audit for Add
+    $auditLog = [
         'user_id' => Auth::id(),
         'action' => 'Add Policy',
         'description' => $auditDescription,
-    ]);
+    ];
+
+    AuditLog::create($auditLog);
+
+    // Send email to a fixed admin/ceo email
+    Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
+
+    
 
     return redirect('panel/policy')->with('success', 'Policy successfully created');
 }
@@ -173,12 +183,19 @@ public function update(Request $request, $id)
     if (!empty($changes)) {
         $changeDescription = 'Updated policy #' . $policy->policy_number . ' | Changes: ' . implode(', ', $changes);
 
-        // Create the audit log entry
-        AuditLog::create([
-            'user_id' => Auth::id(), // Ensure you're using the current authenticated user's ID
-            'action' => 'Update Policy',
-            'description' => $changeDescription,
-        ]);
+        // Log Audit
+            $auditLog = [
+                'user_id' => Auth::id(), // Ensure you're using the current authenticated user's ID
+                        'action' => 'Update Policy',
+                        'description' => $changeDescription,
+            ];
+
+            AuditLog::create($auditLog);
+
+            // Send email to a fixed admin/ceo email
+            Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
+
+        
     }
 
     // Redirect to the policy list page with a success message
@@ -200,11 +217,20 @@ public function delete($id)
 
     // Log the action in AuditLog before deleting
     $auditDescription = 'Deleted policy with Policy Number: ' . $policy->policy_number;
-    AuditLog::create([
-        'user_id' => Auth::id(),
-        'action' => 'Delete Policy',
-        'description' => $auditDescription,
-    ]);
+
+    // Log Audit for Delete
+        $auditLog = [
+            'user_id' => Auth::id(),
+                'action' => 'Delete Policy',
+                'description' => $auditDescription,
+        ];
+
+        AuditLog::create($auditLog);
+
+        // Send email to a fixed admin/ceo email
+        Mail::to('luqmanpro8@gmail.com')->send(new AuditEmail($auditLog));
+
+    
 
     // Delete the policy
     $policy->delete();
