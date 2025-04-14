@@ -28,7 +28,7 @@ Route::post('/login', [AuthController::class, 'auth_login'])->name('login.submit
 
 Route::group(['middleware' => 'useradmin'], function () {
     //Dashboard
-    Route::get('panel/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/panel/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     //Role
     Route::get('panel/role', [RoleController::class, 'list']);

@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form action="{{ url('panel/policy/edit/'.$policy->id) }}" method="POST">
+                    <form action="{{ url('panel/policy/edit/'.$getRecord->id) }}" method="POST">
                         @csrf
 
                         <div class="mb-4">
@@ -18,7 +18,7 @@
                             <select name="quotation_id" class="form-control" required>
                                 <option value="">-- Select Quotation --</option>
                                 @foreach($quotations as $quotation)
-                                    <option value="{{ $quotation->id }}" {{ $quotation->id == $policy->quotation_id ? 'selected' : '' }}>
+                                    <option value="{{ $quotation->id }}" {{ $quotation->id == $getRecord->quotation_id ? 'selected' : '' }}>
                                         {{ $quotation->quotation_number }}
                                     </option>
                                 @endforeach
@@ -27,27 +27,27 @@
 
                         <div class="mb-4">
                             <label for="policy_number" class="form-label">Policy Number</label>
-                            <input type="text" class="form-control" name="policy_number" value="{{ $policy->policy_number }}" required placeholder="Enter policy number">
+                            <input type="text" class="form-control" name="policy_number" value="{{ $getRecord->policy_number }}" required placeholder="Enter policy number">
                         </div>
 
                         <div class="mb-4">
                             <label for="status" class="form-label">Status</label>
                             <select name="status" class="form-control" required>
-                                <option value="active" {{ $policy->status == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="expired" {{ $policy->status == 'expired' ? 'selected' : '' }}>Expired</option>
-                                <option value="terminated" {{ $policy->status == 'terminated' ? 'selected' : '' }}>Terminated</option>
-                                <option value="cancelled" {{ $policy->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                <option value="active" {{ $getRecord->status == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="expired" {{ $getRecord->status == 'expired' ? 'selected' : '' }}>Expired</option>
+                                <option value="terminated" {{ $getRecord->status == 'terminated' ? 'selected' : '' }}>Terminated</option>
+                                <option value="cancelled" {{ $getRecord->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                             </select>
                         </div>
 
                         <div class="mb-4">
                             <label for="start_date" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" name="start_date" value="{{ $policy->start_date }}" required>
+                            <input type="date" class="form-control" name="start_date" value="{{ $getRecord->start_date }}" required>
                         </div>
 
                         <div class="mb-4">
                             <label for="end_date" class="form-label">End Date</label>
-                            <input type="date" class="form-control" name="end_date" value="{{ $policy->end_date }}" required>
+                            <input type="date" class="form-control" name="end_date" value="{{ $getRecord->end_date }}" required>
                         </div>
 
                         <div class="d-flex justify-content-end">

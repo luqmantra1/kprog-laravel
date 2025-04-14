@@ -20,6 +20,10 @@ class QuotationController extends Controller
             abort(404);
         }
 
+        $data['PermissionAdd'] = PermissionRoleModel::getPermission('Add Quotation', Auth::user()->role_id);
+        $data['PermissionEdit'] = PermissionRoleModel::getPermission('Edit Quotation', Auth::user()->role_id);
+        $data['PermissionDelete'] = PermissionRoleModel::getPermission('Delete Quotation', Auth::user()->role_id);
+
         $getRecord = Quotation::with('proposal.client')->get();
         return view('panel.quotation.list', compact('getRecord'));
     }
