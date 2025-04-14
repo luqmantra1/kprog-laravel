@@ -23,16 +23,21 @@ class QuotationController extends Controller
             abort(404);
         }
 
-        $data['PermissionAdd'] = PermissionRoleModel::getPermission('Add Quotation', Auth::user()->role_id);
-        $data['PermissionEdit'] = PermissionRoleModel::getPermission('Edit Quotation', Auth::user()->role_id);
-        $data['PermissionDelete'] = PermissionRoleModel::getPermission('Delete Quotation', Auth::user()->role_id);
+        // Define all required permission variables before using compact()
+    $PermissionAdd = PermissionRoleModel::getPermission('Add Quotation', Auth::user()->role_id);
+    $PermissionEdit = PermissionRoleModel::getPermission('Edit Quotation', Auth::user()->role_id);
+    $PermissionDelete = PermissionRoleModel::getPermission('Delete Quotation', Auth::user()->role_id);
 
         $getRecord = Quotation::with('proposal.client')->get();
-        return view('panel.quotation.list', compact('getRecord'));
+        return view('panel.quotation.list', compact('getRecord','PermissionAdd', 'PermissionEdit', 'PermissionDelete'));
     }
 
     public function add()
     {
+        $PermissionAdd = PermissionRoleModel::getPermission('Add Quotation', Auth::user()->role_id);
+    if (empty($PermissionAdd)) {
+        abort(404);
+    }
         $getProposal = Proposal::with('client')->get();
         return view('panel.quotation.add', compact('getProposal'));
     }
@@ -121,6 +126,10 @@ class QuotationController extends Controller
 
     public function edit($id)
 {
+    $PermissionEdit = PermissionRoleModel::getPermission('Edit Quotation', Auth::user()->role_id);
+    if (empty($PermissionEdit)) {
+        abort(404);
+    }
     $quotation = Quotation::findOrFail($id);
     $clients = Client::all();
     $getProposal = Proposal::with('client')->get();
@@ -181,6 +190,10 @@ AuditLog::create([
 
 public function delete($id)
 {
+    $PermissionDelete = PermissionRoleModel::getPermission('Delete Quotation', Auth::user()->role_id);
+    if (empty($PermissionDelete)) {
+        abort(404);
+    }
     // Find the quotation by ID
     $quotation = Quotation::findOrFail($id);
 

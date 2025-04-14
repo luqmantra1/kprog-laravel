@@ -13,7 +13,9 @@
         <a href="{{ route('quotation.export') }}" class="btn btn-success mb-3">
   <i class="ti ti-download me-1"></i> Export to Excel
 </a>
+@if(!empty($PermissionAdd))
         <a href="{{ url('panel/quotation/add') }}" class="btn btn-primary">Add Quotation</a>
+        @endif
       </div>
 
       <div class="table-responsive">
@@ -30,7 +32,9 @@
               <th>Acceptance</th>
               <th>Policy Status</th>
               <th>Date</th>
+              @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <th class="text-center">Actions</th>
+              @endif
             </tr>
           </thead>
           <tbody>
@@ -85,11 +89,16 @@
               </td>
 
               <td>{{ \Carbon\Carbon::parse($quotation->created_at)->format('d M Y') }}</td>
-
+              @if(!empty($PermissionEdit) || !empty($PermissionDelete))
               <td class="text-center">
+              @if(!empty($PermissionEdit))
                 <a href="{{ url('panel/quotation/edit/'.$quotation->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                @endif
+                @if(!empty($PermissionDelete))
                 <a href="{{ url('panel/quotation/delete/'.$quotation->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this quotation?')">Delete</a>
+                @endif
               </td>
+              @endif
             </tr>
             @empty
             <tr>
