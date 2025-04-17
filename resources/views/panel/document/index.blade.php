@@ -13,54 +13,54 @@
                 </div>
 
                 <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Proposal</th>
+                                <th>Quotation</th>
+                                <th>Policy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($documents as $item)
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <th>Uploaded By</th>
-                                    <th>Uploaded At</th>
-                                    <th class="text-center">Actions</th>
+                                    <td>{{ $item->id }}</td>
+                                    <td>{{ $item->client->name ?? '-' }}</td>
+
+                                    <!-- Proposal -->
+                                    <td>
+                                        @if ($item->proposal_path)
+                                            <a href="{{ asset('storage/' . $item->proposal_path) }}" class="btn btn-sm btn-outline-primary" target="_blank">Download Proposal</a>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
+
+                                    <!-- Quotation -->
+                                    <td>
+                                        @if ($item->quotation_path)
+                                            <a href="{{ asset('storage/' . $item->quotation_path) }}" class="btn btn-sm btn-outline-success" target="_blank">Download Quotation</a>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
+
+                                    <!-- Policy -->
+                                    <td>
+                                        @if ($item->policy_path)
+                                            <a href="{{ asset('storage/' . $item->policy_path) }}" class="btn btn-sm btn-outline-warning" target="_blank">Download Policy</a>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($documents as $doc)
-                                    <tr>
-                                        <td><strong>{{ $doc->title }}</strong></td>
-                                        <td>{{ $doc->description }}</td>
-                                        <td>
-                                            <span class="badge bg-info text-dark">
-                                                {{ $doc->user->name }}
-                                            </span>
-                                        </td>
-                                        <td>{{ $doc->created_at->format('d M Y, h:i A') }}</td>
-                                        <td class="text-center">
-                                            <a href="{{ route('document.download', $doc->id) }}" class="btn btn-sm btn-success me-1">
-                                                <i class="bi bi-download"></i> Download
-                                            </a>
-                                            <a href="{{ route('document.delete', $doc->id) }}" 
-                                               onclick="return confirm('Are you sure you want to delete this document?')"
-                                               class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash3"></i> Delete
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted">No documents uploaded yet.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr><td colspan="5" class="text-center text-muted">No documents uploaded</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="card-footer text-muted text-end small">

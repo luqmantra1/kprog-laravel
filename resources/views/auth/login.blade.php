@@ -52,20 +52,20 @@
                     <input type="password" class="form-control" id="password" name="password" required>
                   </div>
 
-                  <div class="d-flex align-items-center justify-content-between mb-4">
+                  <!-- <div class="d-flex align-items-center justify-content-between mb-4">
                     <div class="form-check">
                       <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
                       <label class="form-check-label" for="rememberMe">Remember this device</label>
                     </div>
                     <a class="text-primary fw-bold" href="">Forgot Password?</a>
-                  </div>
+                  </div> -->
 
                   <button type="submit" class="btn btn-primary w-100 py-2 fs-5">Sign In</button>
 
-                  <div class="text-center mt-4">
+                  <!-- <div class="text-center mt-4">
                     <span class="fs-6 text-muted">New To Kprog ?</span>
                     <a class="text-primary fw-bold ms-2" href="">Create an account</a>
-                  </div>
+                  </div> -->
                 </form>
                 <!-- End Form -->
               </div>

@@ -6,56 +6,99 @@ use Illuminate\Http\Request;
 use App\Models\Document;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Client;
+use App\Models\Proposal;
+use App\Models\Quotation;
+use App\Models\Policy;
 
 class DocumentController extends Controller
 {
     public function index()
     {
-        $documents = Document::with('user')->latest()->get();
+        $proposals = Document::whereNotNull('proposal_path')->with('user', 'proposal.client')->get();
+        $quotations = Document::whereNotNull('quotation_path')->with('user', 'quotation.proposal.client')->get();
+        $policies = Document::whereNotNull('policy_path')->with('user', 'policy.quotation.proposal.client')->get();
+        $documents = Document::with('client')->get();
+
         return view('panel.document.index', compact('documents'));
     }
 
     public function create()
     {
-        return view('panel.document.create');
+        $clients = Client::all();
+        return view('panel.document.create', compact('clients'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'client_id' => 'required|exists:client,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'required|mimes:pdf,doc,docx,xlsx,jpg,jpeg,png|max:5120',
+            'file' => 'nullable|mimes:pdf,doc,docx,xlsx,jpg,jpeg,png|max:5120',
+            'proposal_file' => 'nullable|mimes:pdf,doc,docx|max:5120',
+            'quotation_file' => 'nullable|mimes:pdf,doc,docx|max:5120',
+            'policy_file' => 'nullable|mimes:pdf,doc,docx|max:5120',
         ]);
-
-        $path = $request->file('file')->store('documents');
-
-        Document::create([
+        
+        $data = [
             'user_id' => Auth::id(),
+            'client_id' => $request->client_id,
             'title' => $request->title,
             'description' => $request->description,
-            'file_path' => $path,
-        ]);
+        ];
+        
+        if ($request->hasFile('file')) {
+            $data['file_path'] = $request->file('file')->store('document');
+        }
+
+        if ($request->hasFile('proposal_file')) {
+            $data['proposal_path'] = $request->file('proposal_file')->store('proposal');
+        }
+
+        if ($request->hasFile('quotation_file')) {
+            $data['quotation_path'] = $request->file('quotation_file')->store('quotation');
+        }
+
+        if ($request->hasFile('policy_file')) {
+            $data['policy_path'] = $request->file('policy_file')->store('policie');
+        }
+
+        Document::create($data);
 
         return redirect()->route('document.index')->with('success', 'Document uploaded successfully!');
     }
 
-    public function download($id)
+    public function downloadProposal($id)
     {
-        $document = Document::findOrFail($id);
-        return Storage::download($document->file_path, $document->title . '.' . pathinfo($document->file_path, PATHINFO_EXTENSION));
-    }
-
-    public function destroy($id)
-    {
-        $document = Document::findOrFail($id);
-
-        if (Storage::exists($document->file_path)) {
-            Storage::delete($document->file_path);
+        $user = Auth::user();
+        if (!$user->hasRole(['admin', 'ceo'])) {
+            abort(403, 'Unauthorized action. Only admins and CEOs can download proposals.');
         }
 
-        $document->delete();
+        $document = Document::findOrFail($id);
+        return Storage::download($document->proposal_path, 'Proposal_' . $document->title . '.' . pathinfo($document->proposal_path, PATHINFO_EXTENSION));
+    }
 
-        return redirect()->route('document.index')->with('success', 'Document deleted successfully.');
+    public function downloadQuotation($id)
+    {
+        $user = Auth::user();
+        if (!$user->hasRole(['admin', 'ceo'])) {
+            abort(403, 'Unauthorized action. Only admins and CEOs can download quotations.');
+        }
+
+        $document = Document::findOrFail($id);
+        return Storage::download($document->quotation_path, 'Quotation_' . $document->title . '.' . pathinfo($document->quotation_path, PATHINFO_EXTENSION));
+    }
+
+    public function downloadPolicy($id)
+    {
+        $user = Auth::user();
+        if (!$user->hasRole(['admin', 'ceo'])) {
+            abort(403, 'Unauthorized action. Only admins and CEOs can download policies.');
+        }
+
+        $document = Document::findOrFail($id);
+        return Storage::download($document->policy_path, 'Policy_' . $document->title . '.' . pathinfo($document->policy_path, PATHINFO_EXTENSION));
     }
 }

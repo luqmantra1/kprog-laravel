@@ -98,13 +98,13 @@ Route::prefix('panel/quotation')->group(function() {
     Route::get('panel/policy/export', [PolicyController::class, 'exportPolicyReport'])->name('policy.export');
     
 //Documents
-Route::middleware(['auth'])->group(function () {
-    Route::get('panel/document', [DocumentController::class, 'index'])->name('document.index');
-    Route::get('panel/document/create', [DocumentController::class, 'create'])->name('document.create');
-    Route::post('panel/document/store', [DocumentController::class, 'store'])->name('document.store');
-    Route::get('panel/document/download/{id}', [DocumentController::class, 'download'])->name('document.download');
-    Route::get('panel/document/delete/{id}', [DocumentController::class, 'destroy'])->name('document.delete');
-});
+Route::get('panel/document', [DocumentController::class, 'index'])->name('document.index');
+Route::get('panel/document/create', [DocumentController::class, 'create'])->name('document.create');
+Route::post('panel/document', [DocumentController::class, 'store'])->name('document.store');
+Route::get('panel/document/download/{id}', [DocumentController::class, 'download'])->name('document.download');
+Route::get('panel/document/download/proposal/{id}', [DocumentController::class, 'downloadProposal'])->name('document.download.proposal');
+Route::get('panel/document/download/quotation/{id}', [DocumentController::class, 'downloadQuotation'])->name('document.download.quotation');
+Route::get('panel/document/download/policy/{id}', [DocumentController::class, 'downloadPolicy'])->name('document.download.policy');
     
 
     
